@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-type RegionalSettings = {
+export type RegionalSettings = {
   Culture: string;
   LongDateFormat: string;
   ShortDateFormat: string;
@@ -7109,3 +7109,5 @@ export const RegionalSettingsPerLocale: RegionalSettings[] = [
     FirstDayOfWeek: 0,
   },
 ];
+
+export const localizedFormatsMap = new Map(RegionalSettingsPerLocale.map((settings) => [settings.Culture.toLowerCase(), settings]));

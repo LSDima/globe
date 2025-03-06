@@ -27,9 +27,13 @@
     "checkchange": "yarn beachball check",
     "release": "yarn beachball publish -t latest"
   },
+  "dependencies": {
+    "date-fns": "^4.1.0"
+  },
   "devDependencies": {
     "@eslint/compat": "^1.2.7",
     "@formatjs/intl-datetimeformat": "^6.17.3",
+    "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-typescript": "^12.1.2",
     "@types/node": "^22.13.9",
     "@typescript-eslint/parser": "^8.25.0",
@@ -41,7 +45,6 @@
     "globals": "^16.0.0",
     "rimraf": "^6.0.1",
     "rollup": "^4.34.9",
-    "tslib": "^2.8.1",
     "tslint": "^5.1.0",
     "tsutils": "^3.21.0",
     "typescript": "^5.8.2",
