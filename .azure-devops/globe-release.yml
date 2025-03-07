@@ -8,10 +8,8 @@ variables:
     value: production,externalfacing
   - name: serviceTreeID
     value: c3a0680e-4563-4c47-bce9-710df6e5485c
-  - name: adoOrgBaseUrl
-    value: https://pkgs.dev.azure.com/domoreexp
-  - name: adoNpmFeedName
-    value: npm-mirror
+  - name: adoNpmFeedBaseUrl
+    value: https://pkgs.dev.azure.com/DomoreexpGithub/_packaging/GraphQL/npm/registry/
 
 resources:
   repositories:
@@ -48,6 +46,9 @@ extends:
               image: ubuntu-latest
               os: linux
             steps:
+              - checkout: self
+                persistCredentials: true # fix for beachball: https://github.com/microsoft/beachball/issues/674
+                fetchDepth: 2
               - script: yarn
                 displayName: yarn
               - script: |
@@ -56,18 +57,23 @@ extends:
               - script: |
                   git config user.email "teams-globalization@microsoft.com"
                   git config user.name "Globalization Team Account"
-                  git remote set-url origin https://teams-globalization:$(ossGithubPAT)@github.com/microsoft/globe.git
                   git fetch --depth=2
                 displayName: Configure git for release
-              - script: yarn release -y -n $(ossNpmToken) --access public
-                displayName: Release
+              - script: yarn release -y -n $(ossNpmToken) --access public --no-push --keep-change-files
+                displayName: Release to the npm registry
+              - script: |
+                  git restore .
+                displayName: Discard beachball's changes
+              - script: |
+                  echo "always-auth=true" > .npmrc
+                  echo "registry=$(adoNpmFeedBaseUrl)" >> .npmrc
+              - task: npmAuthenticate@0
+                inputs:
+                  workingFile: ".npmrc"
+              - script: yarn release -y --registry $(adoNpmFeedBaseUrl)
+                displayName: Release to the ado npm feed
               - task: 1ES.PublishPipelineArtifact@1
                 displayName: 📒 Publish Manifest
                 inputs:
                   artifactName: SBom-$(System.JobAttempt)
                   targetPath: $(System.DefaultWorkingDirectory)/_manifest
-              - template: .azure-devops/steps/pierce-ado-npm-mirror-cache.yml@self
-                parameters:
-                  adoNpmFeedPat: $(adoNpmFeedPat)
-                  adoOrgBaseUrl: $(adoProjectBaseUrl)
-                  adoNpmFeedName: $(adoNpmFeedName)
