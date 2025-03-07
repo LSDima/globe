@@ -9,7 +9,7 @@ variables:
   - name: serviceTreeID
     value: c3a0680e-4563-4c47-bce9-710df6e5485c
   - name: adoNpmFeedBaseUrl
-    value: https://pkgs.dev.azure.com/DomoreexpGithub/_packaging/GraphQL/npm/registry/
+    value: https://pkgs.dev.azure.com/DomoreexpGithub/_packaging/Globalization/npm/registry/
 
 resources:
   repositories:
